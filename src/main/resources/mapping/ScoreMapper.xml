@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.javatribe.score.mapper.ScoreMapper">
+    <resultMap id="BaseResultMap" type="org.javatribe.score.po.Score">
+        <id column="judge_id" property="judgeId" jdbcType="INTEGER"/>
+        <id column="team_id" property="teamId" jdbcType="INTEGER"/>
+        <result column="score_num" property="scoreNum" jdbcType="DOUBLE"/>
+    </resultMap>
+    <resultMap id="ScoreProMap" type="org.javatribe.score.po.ScorePro">
+        <id column="team_id" property="teamId" jdbcType="INTEGER"/>
+        <result column="team_name" property="teamName" jdbcType="VARCHAR"/>
+        <result column="team_title" property="teamTitle" jdbcType="VARCHAR"/>
+        <result column="score_num" property="scoreNum" jdbcType="DOUBLE"/>
+        <result column="team_leader" property="teamLeader" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="ScoreAvgMap" type="org.javatribe.score.po.ScoreAvg">
+        <id column="team_id" property="teamId" jdbcType="INTEGER"/>
+        <result column="team_name" property="teamName" jdbcType="VARCHAR"/>
+        <result column="team_title" property="teamTitle" jdbcType="VARCHAR"/>
+        <result column="avg" property="avg" jdbcType="DOUBLE"/>
+        <result column="team_leader" property="teamLeader" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    judge_id, team_id, score_num
+  </sql>
+    <sql id="ScorePro_Column_List">
+    team.team_id,team_name,team_title,score_num,team_leader
+  </sql>
+    <sql id="ScoreAvg_Colume_List">
+        team.team_id,team_title,team_name,team_leader,ROUND(AVG(score_num),2) avg
+    </sql>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="org.javatribe.score.po.ScoreExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from score
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="org.javatribe.score.po.ScoreKey">
+        select
+        <include refid="Base_Column_List"/>
+        from score
+        where judge_id = #{judgeId,jdbcType=INTEGER}
+        and team_id = #{teamId,jdbcType=INTEGER}
+    </select>
+    <select id="selectByJudgeId" resultMap="ScoreProMap" parameterType="java.lang.Integer">
+        select
+        <include refid="ScorePro_Column_List"/>
+        from score,team WHERE judge_id = #{judgeId,jdbcType=INTEGER} AND score.team_id=team.team_id;
+    </select>
+    <select id="selectScoreAvg" resultMap="ScoreAvgMap">
+        select
+        <include refid="ScoreAvg_Colume_List"/>
+        from score,team WHERE score.`team_id`=team.`team_id` GROUP BY team_id ORDER BY score_num
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="org.javatribe.score.po.ScoreKey">
+    delete from score
+    where judge_id = #{judgeId,jdbcType=INTEGER}
+      and team_id = #{teamId,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteByExample" parameterType="org.javatribe.score.po.ScoreExample">
+        delete from score
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="org.javatribe.score.po.Score">
+    insert into score (judge_id, team_id, score_num
+      )
+    values (#{judgeId,jdbcType=INTEGER}, #{teamId,jdbcType=INTEGER}, #{scoreNum,jdbcType=DOUBLE}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="org.javatribe.score.po.Score">
+        insert into score
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="judgeId != null">
+                judge_id,
+            </if>
+            <if test="teamId != null">
+                team_id,
+            </if>
+            <if test="scoreNum != null">
+                score_num,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="judgeId != null">
+                #{judgeId,jdbcType=INTEGER},
+            </if>
+            <if test="teamId != null">
+                #{teamId,jdbcType=INTEGER},
+            </if>
+            <if test="scoreNum != null">
+                #{scoreNum,jdbcType=DOUBLE},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="org.javatribe.score.po.ScoreExample" resultType="java.lang.Integer">
+        select count(*) from score
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update score
+        <set>
+            <if test="record.judgeId != null">
+                judge_id = #{record.judgeId,jdbcType=INTEGER},
+            </if>
+            <if test="record.teamId != null">
+                team_id = #{record.teamId,jdbcType=INTEGER},
+            </if>
+            <if test="record.scoreNum != null">
+                score_num = #{record.scoreNum,jdbcType=DOUBLE},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update score
+        set judge_id = #{record.judgeId,jdbcType=INTEGER},
+        team_id = #{record.teamId,jdbcType=INTEGER},
+        score_num = #{record.scoreNum,jdbcType=DOUBLE}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="org.javatribe.score.po.Score">
+        update score
+        <set>
+            <if test="scoreNum != null">
+                score_num = #{scoreNum,jdbcType=DOUBLE},
+            </if>
+        </set>
+        where judge_id = #{judgeId,jdbcType=INTEGER}
+        and team_id = #{teamId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="org.javatribe.score.po.Score">
+    update score
+    set score_num = #{scoreNum,jdbcType=DOUBLE}
+    where judge_id = #{judgeId,jdbcType=INTEGER}
+      and team_id = #{teamId,jdbcType=INTEGER}
+  </update>
+</mapper>
