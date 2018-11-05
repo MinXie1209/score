@@ -1,5 +1,7 @@
 package org.javatribe.score.po;
 
+import java.io.Serializable;
+
 /**
  * @ClassName ScoreAvg
  * @Description TODO
@@ -7,7 +9,7 @@ package org.javatribe.score.po;
  * @Date 2018/10/21 16:30
  * @Version 1.0.0
  **/
-public class ScoreAvg extends Team {
+public class ScoreAvg extends Team implements Serializable {
     private Double avg;
 
     public Double getAvg() {

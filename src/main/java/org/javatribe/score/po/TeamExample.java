@@ -1,9 +1,10 @@
 package org.javatribe.score.po;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamExample {
+public class TeamExample implements Serializable {
     protected String orderByClause;
 
     protected boolean distinct;

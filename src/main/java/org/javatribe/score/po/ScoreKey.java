@@ -1,6 +1,8 @@
 package org.javatribe.score.po;
 
-public class ScoreKey {
+import java.io.Serializable;
+
+public class ScoreKey implements Serializable {
     private Integer judgeId;
 
     private Integer teamId;

@@ -1,6 +1,8 @@
 package org.javatribe.score.po;
 
-public class Judge {
+import java.io.Serializable;
+
+public class Judge implements Serializable {
     private Integer judgeId;
 
     private String judgeName;
