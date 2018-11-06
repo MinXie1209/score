@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @ClassName TeamServiceImpl
@@ -43,7 +44,7 @@ public class TeamServiceImpl implements TeamService {
         } else {
             List<Team> teams = teamMapper.selectByExample(null);
             Result result = ResultUtils.success(teams);
-            teamListRedisTemplate.opsForValue().set("listTeam", teams);
+            teamListRedisTemplate.opsForValue().set("listTeam", teams,5,TimeUnit.MINUTES);
             return result;
         }
     }
