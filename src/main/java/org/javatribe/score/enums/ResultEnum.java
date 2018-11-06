@@ -12,7 +12,8 @@ public enum ResultEnum {
     RESCORE(10003, "重复打分"),
     TOKEN_ERROR(10004, "token错误"),
     JUDGE_ID_ERROR(10005, "评委id错误"),
-    JUDGE_NAME_ERROR(10006, "评委名字错误");
+    JUDGE_NAME_ERROR(10006, "评委名字错误"),
+    BEYOND_NUMBER(10007,"评分范围0-100");
     private Integer code;
     private String msg;
 
