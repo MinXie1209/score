@@ -1,6 +1,7 @@
 package org.javatribe.score.controller;
 
 import org.javatribe.score.annotation.TokenValid;
+import org.javatribe.score.enums.ResultEnum;
 import org.javatribe.score.po.Result;
 import org.javatribe.score.po.Score;
 import org.javatribe.score.service.ScoreService;
@@ -61,6 +62,12 @@ public class ScoreController {
     @TokenValid
     @RequestMapping(value = "/score", method = RequestMethod.PUT)
     public Result addScore(@RequestBody @Valid Score score) throws Exception {
+        if(score!=null&&score.getScoreNum()!=null){
+            if(score.getScoreNum()>100.00){
+                return ResultUtils.error(ResultEnum.BEYOND_NUMBER);
+            }
+        }
         return scoreService.addScore(score);
+
     }
 }
