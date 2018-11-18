@@ -3,10 +3,8 @@ package org.javatribe.score.service.impl;
 import org.javatribe.score.enums.ResultEnum;
 import org.javatribe.score.exception.ResultException;
 import org.javatribe.score.mapper.ScoreMapper;
-import org.javatribe.score.po.Result;
-import org.javatribe.score.po.Score;
-import org.javatribe.score.po.ScoreAvg;
-import org.javatribe.score.po.ScoreExample;
+import org.javatribe.score.mapper.TeamMapper;
+import org.javatribe.score.po.*;
 import org.javatribe.score.service.ScoreService;
 import org.javatribe.score.utils.ResultUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,8 @@ public class ScoreServiceImpl implements ScoreService {
     @Autowired
     private ScoreMapper scoreMapper;
     @Autowired
+    private TeamMapper teamMapper;
+    @Autowired
     private RedisTemplate<String, List<ScoreAvg>> template;
 
     /**
@@ -39,13 +39,12 @@ public class ScoreServiceImpl implements ScoreService {
      */
     @Override
     public Result listScore() throws Exception {
-        List<ScoreAvg> scoreAvgs=template.opsForValue().get("listScore");
-        if(scoreAvgs==null){
-            scoreAvgs=scoreMapper.selectScoreAvg();
-            template.opsForValue().set("listScore",scoreAvgs,5,TimeUnit.MINUTES);
+        List<ScoreAvg> scoreAvgs = template.opsForValue().get("listScore");
+        if (scoreAvgs == null) {
+            scoreAvgs = scoreMapper.selectScoreAvg();
+            template.opsForValue().set("listScore", scoreAvgs, 5, TimeUnit.MINUTES);
             return ResultUtils.success(scoreAvgs);
-        }
-        else{
+        } else {
             return ResultUtils.success(scoreAvgs);
         }
 
@@ -61,8 +60,21 @@ public class ScoreServiceImpl implements ScoreService {
      */
     @Override
     public Result listScoreByJudgeId(int judgeId) throws Exception {
+        List<ScorePro> scorePros = scoreMapper.selectByJudgeId(judgeId);
+        List<Team> teams = teamMapper.selectByExample(null);
+        for (Team team : teams) {
+            boolean isNotScore=true;
+            for (ScorePro scorePro : scorePros) {
+                if (scorePro.getTeamId().equals(team.getTeamId())) {
+                    isNotScore=false;
+                }
+            }
+            if(isNotScore){
+                scorePros.add(new ScorePro(team));
+            }
 
-        return ResultUtils.success(scoreMapper.selectByJudgeId(judgeId));
+        }
+        return ResultUtils.success(scorePros);
     }
 
     /**
