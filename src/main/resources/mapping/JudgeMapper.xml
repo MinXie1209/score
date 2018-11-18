@@ -100,7 +100,7 @@
     insert into judge (judge_id, judge_name)
     values (#{judgeId,jdbcType=INTEGER}, #{judgeName,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="org.javatribe.score.po.Judge" >
+  <insert id="insertSelective" parameterType="org.javatribe.score.po.Judge"   useGeneratedKeys="true" keyProperty="judgeId">
     insert into judge
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="judgeId != null" >
