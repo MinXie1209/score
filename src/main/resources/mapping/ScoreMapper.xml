@@ -118,7 +118,7 @@
     <select id="selectScoreAvg" resultMap="ScoreAvgMap">
         select
         <include refid="ScoreAvg_Colume_List"/>
-        from score,team WHERE score.`team_id`=team.`team_id` GROUP BY team_id ORDER BY score_num DESC
+        from score,team WHERE score.`team_id`=team.`team_id` GROUP BY team_id ORDER BY avg DESC
     </select>
     <delete id="deleteByPrimaryKey" parameterType="org.javatribe.score.po.ScoreKey">
     delete from score
