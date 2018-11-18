@@ -23,13 +23,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class JudgeController {
     @Value("${code}")
-    private int code;
+    private String code;
     @Autowired
     JudgeService judgeService;
-    @RequestMapping(value = "/judge",method = RequestMethod.PUT)
-    public Result<String> registerJudge(@RequestParam(required = true) String judgeName,@RequestParam(required = true) int code) throws Exception {
-        if(code==this.code){
-            return judgeService.registerJudge(judgeName);
+
+    @RequestMapping(value = "/judge", method = RequestMethod.PUT)
+    public Result<String> registerJudge(@RequestParam(required = true) String judgeName, @RequestParam(required = true) String code) throws Exception {
+
+        if (judgeName == null || judgeName.trim().isEmpty() || judgeName.length() > 8) {
+            System.out.println("before:" + judgeName.length());
+            System.out.println("after:" + judgeName.trim().length());
+
+            return ResultUtils.error(ResultEnum.JUDGE_NAME_ROUND_ERROR);
+        }
+        if (this.code.equals(code)) {
+            return judgeService.registerJudge(judgeName.trim());
         }
         return ResultUtils.error(ResultEnum.CODE_ERROR);
     }
