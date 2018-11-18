@@ -11,7 +11,17 @@ import java.io.Serializable;
  **/
 public class ScorePro extends Team implements Serializable {
 
-    private Double scoreNum;
+    private Double scoreNum=0.0;
+
+    public ScorePro(Team team) {
+        this.setTeamId(team.getTeamId());
+        this.setTeamLeader(team.getTeamLeader());
+        this.setTeamName(team.getTeamName());
+        this.setTeamTitle(team.getTeamTitle());
+    }
+
+    public ScorePro() {
+    }
 
     public Double getScoreNum() {
         return scoreNum;
